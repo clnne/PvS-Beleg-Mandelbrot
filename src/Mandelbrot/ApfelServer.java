@@ -53,7 +53,7 @@ public class ApfelServer {
             double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
             double cr = -0.743643887036151, ci = 0.131825904205330;
 
-            System.out.println("[-] Starting calculation with approximately " + numThreads + " Threads.");
+            System.out.println("[+] Starting calculation with approximately " + numThreads + " Threads.");
 
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
                 System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax + " | zoom_rate: " + zoomRate);

@@ -2,18 +2,15 @@ package Mandelbrot;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ApfelView {
     private int xpix, ypix;
     private BufferedImage image;
     private ApfelPanel apfelPanel;
-    private static final int availableCores = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args) {
-        ApfelView view = new ApfelView(1280, 720);
+        ApfelView view = new ApfelView(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT);
     }
 
     public ApfelView(int xpix, int ypix) {
@@ -26,8 +23,8 @@ public class ApfelView {
         apfelPanel = new ApfelPanel();
         JFrame frame = new JFrame();
         frame.setTitle("Mandelbrot");
-        frame.setSize(xpix, ypix + 72);
-        frame.setResizable(false);
+        frame.setSize(xpix, ypix + 80);
+        frame.setResizable(true);
         JPanel panelBottom = new JPanel(new FlowLayout());
 
         JButton startButton = new JButton("Mandelbrot berechnen");

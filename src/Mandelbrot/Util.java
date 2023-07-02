@@ -1,5 +1,7 @@
 package Mandelbrot;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -12,6 +14,9 @@ public class Util {
     public static Path recordingPath = currentPath.resolve("src/Aufnahmen");
     public static Path videoPath = currentPath.resolve(recordingPath + "/Videos");
     public static Path imagePath = currentPath.resolve(recordingPath + "/Bilder");
+
+    public static int RESOLUTION_WIDTH = (1920);
+    public static int RESOLUTION_HEIGHT = (1080) - 80; // - 80px für die Taskbar
 
     public static void createDirectory(Path path) {
         try {
