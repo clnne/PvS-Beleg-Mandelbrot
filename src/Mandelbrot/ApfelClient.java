@@ -8,33 +8,28 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+
 public class ApfelClient {
     Dotenv dotenv = Dotenv.configure()
-            .directory("src/")
-            .load();
+        .directory("src/")
+        .load();
 
     final String SERVER_IP = dotenv.get("SERVER_IP");
     final int SERVER_PORT = Integer.parseInt(dotenv.get("SERVER_PORT"));
-    final double ZOOM_RATE = 1.2;
 
     public static void main(String[] args) {
         // Erstelle einen neuen Client und starte die Berechnung
         ApfelClient client = new ApfelClient();
-        client.startCalculation(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, null);
+        client.startCalculation(null);
     }
 
-    public void startCalculation(int xpix, int ypix, ApfelView view) {
+    public void startCalculation(ApfelView view) {
         try {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
             System.out.println("[+] Connected to server.");
 
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-
-            outputStream.writeObject(xpix);
-            outputStream.writeObject(ypix);
-            outputStream.writeObject(ZOOM_RATE);
-            outputStream.flush();
 
             // Empfange Daten vom Server
             Object obj;
@@ -61,8 +56,8 @@ public class ApfelClient {
             System.out.println("[-] Disconnected from server.");
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("[?] Connection to server failed.");
-            System.out.println("[?] Server-Info: " + SERVER_IP + ":" + SERVER_PORT);
+            System.out.println("[-] Connection to server failed.");
+            System.out.println("[-] Server-Info: " + SERVER_IP + ":" + SERVER_PORT);
             e.printStackTrace();
         }
     }

@@ -29,13 +29,15 @@ public class VideoCreator {
         final int width = Util.RESOLUTION_WIDTH;
         final int height = Util.RESOLUTION_HEIGHT;
 
+        System.out.println("[+] Creating video " + videoName + ".mp4 ...");
 
         try {
             final IMediaWriter writer = ToolFactory.makeWriter(Util.videoPath + "/" + videoName + ".mp4");
 
-            writer.addListener(ToolFactory.makeViewer(
-                    IMediaViewer.Mode.VIDEO_ONLY, true,
-                    javax.swing.WindowConstants.EXIT_ON_CLOSE));
+
+            //writer.addListener(ToolFactory.makeViewer(
+            //        IMediaViewer.Mode.VIDEO_ONLY, true,
+            //        javax.swing.WindowConstants.EXIT_ON_CLOSE));
 
             writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
@@ -49,12 +51,15 @@ public class VideoCreator {
             // Iterate over the sorted files
             for (File file : files) {
                 BufferedImage frame = ImageIO.read(file);
-                System.out.println("[+] Adding frame " + file.getName());
+                //System.out.println("[/] Adding frame " + file.getName());
                 writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
                 nextFrameTime += frameRate;
             }
 
             writer.close();
+
+            System.out.println("[+] Video " + videoName + ".mp4 has been created with " + files.length + " frames.");
+            System.out.println("[?] The video can be found in " + Util.videoPath + "/");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,16 +72,13 @@ public class VideoCreator {
 
         // Sort the files by their number
         Arrays.sort(files, Comparator.comparingInt(f -> Integer.parseInt(f.getName().substring(6, f.getName().length() - 5))));
-
-        // Iterate over the sorted files
         for (File file : files) {
-            // Do something with the file
             System.out.println(file.getName());
         }
     }
 
     public static void main(String[] args) {
-        createVideo("test");
+        createVideo(Util.getTimestamp());
     }
 
 }

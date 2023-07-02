@@ -1,13 +1,14 @@
 package Mandelbrot;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class Util {
     public static Path currentPath = Paths.get("");
@@ -16,7 +17,7 @@ public class Util {
     public static Path imagePath = currentPath.resolve(recordingPath + "/Bilder");
 
     public static int RESOLUTION_WIDTH = (1280);
-    public static int RESOLUTION_HEIGHT = (720) - 80; // - 80px für die Taskbar
+    public static int RESOLUTION_HEIGHT = (720);
 
     public static void createDirectory(Path path) {
         try {
@@ -34,6 +35,10 @@ public class Util {
         } catch (IOException e) {
             System.out.println("[-] Failed to save image.");
         }
+    }
+
+    public static String getTimestamp() {
+        return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
     }
 
 }
