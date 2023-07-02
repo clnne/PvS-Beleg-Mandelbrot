@@ -7,17 +7,11 @@ import com.xuggle.mediatool.ToolFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
+
 
 public class VideoCreator {
 
@@ -32,8 +26,8 @@ public class VideoCreator {
         final int framesPerSecond = 8;
         final long frameRate = 1000000 / framesPerSecond;
 
-        final int width = 1280;
-        final int height = 720;
+        final int width = 854;
+        final int height = 480;
 
 
         try {

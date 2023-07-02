@@ -1,5 +1,7 @@
 package Mandelbrot;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,15 +9,18 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ApfelClient {
+    Dotenv dotenv = Dotenv.configure()
+            .directory("src/")
+            .load();
 
-    final String SERVER_IP = "192.168.178.100";
-    final int SERVER_PORT = 1337;
+    final String SERVER_IP = dotenv.get("SERVER_IP");
+    final int SERVER_PORT = Integer.parseInt(dotenv.get("SERVER_PORT"));
     final double ZOOM_RATE = 1.2;
 
     public static void main(String[] args) {
         // Erstelle einen neuen Client und starte die Berechnung
         ApfelClient client = new ApfelClient();
-        client.startCalculation(640, 480, null);
+        client.startCalculation(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, null);
     }
 
     public void startCalculation(int xpix, int ypix, ApfelView view) {
@@ -57,6 +62,7 @@ public class ApfelClient {
 
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("[?] Connection to server failed.");
+            System.out.println("[?] Server-Info: " + SERVER_IP + ":" + SERVER_PORT);
             e.printStackTrace();
         }
     }
