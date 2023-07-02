@@ -139,7 +139,7 @@ public class ApfelServer {
     }
 
     Color farbwert(int iter) {
-        boolean farbe = true;
+        /*boolean farbe = true;
 
         final int[][] farben = {
             {1, 255, 255, 255}, // Hohe Iterationszahlen sollen hell,
@@ -172,5 +172,8 @@ public class ApfelServer {
             }
         }
         return Color.BLACK;
+        */
+        Color color = Color.getHSBColor((float)iter / (float)MAX_ITERATIONS * 20.0f, 1.0f, 1.0f);
+        return color;
     }
 }
