@@ -2,6 +2,8 @@ package Mandelbrot;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ApfelView {
@@ -63,9 +65,13 @@ public class ApfelView {
         apfelPanel.repaint();
     }
 
+    private int counter = 0;
     class ApfelPanel extends JPanel {
         public void paint(Graphics g) {
             g.drawImage(image, 0, 0, null);
+
+            // Speichere das Bild
+            Util.saveImage(image, counter++);
         }
     }
 }
