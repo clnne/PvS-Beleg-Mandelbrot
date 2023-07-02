@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 
+
 public class ApfelView {
     private int xpix, ypix;
     private BufferedImage image;
@@ -23,7 +24,7 @@ public class ApfelView {
         apfelPanel = new ApfelPanel();
         JFrame frame = new JFrame();
         frame.setTitle("Mandelbrot");
-        frame.setSize(xpix, ypix + 80);
+        frame.setSize(xpix, ypix + 72);
         frame.setResizable(true);
         JPanel panelBottom = new JPanel(new FlowLayout());
 
@@ -34,7 +35,7 @@ public class ApfelView {
             // über Thread da sonst die gui blockiert
             Thread calculationThread = new Thread(() -> {
                 ApfelClient client = new ApfelClient();
-                client.startCalculation(xpix, ypix, ApfelView.this);
+                client.startCalculation(ApfelView.this);
                 SwingUtilities.invokeLater(() -> panelBottom.setEnabled(true));
             });
             calculationThread.setPriority(Thread.MAX_PRIORITY);
@@ -43,6 +44,12 @@ public class ApfelView {
             SwingUtilities.invokeLater(() -> panelBottom.setEnabled(true));
         });
         panelBottom.add(startButton);
+
+        JButton createVideoButton = new JButton("Video erstellen");
+        createVideoButton.addActionListener(e -> {
+            VideoCreator.createVideo(Util.getTimestamp());
+        });
+        panelBottom.add(createVideoButton);
 
         // Erstelle das Fenster mit allen Buttons
         frame.setContentPane(apfelPanel);
@@ -67,7 +74,7 @@ public class ApfelView {
         public void paint(Graphics g) {
             g.drawImage(image, 0, 0, null);
 
-            // Speichere das Bild
+            // Speichere das Bild als JPEG
             Util.saveImage(image, counter++);
         }
     }

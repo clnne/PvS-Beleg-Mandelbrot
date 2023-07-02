@@ -1,14 +1,17 @@
 package Mandelbrot;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+
 
 public class ApfelServer {
     private ServerSocket serverSocket;
     final int MAX_ITERATIONS = 5000;
     final double MAX_BETRAG = 4;
-    final int MAX_ZOOM_COUNT = 50;
+    final int MAX_ZOOM_COUNT = 240;
+    final double ZOOM_RATE = 1.1;
     final int SERVER_PORT = 1337;
 
     final int numThreads = Runtime.getRuntime().availableProcessors() * 4;
@@ -41,26 +44,20 @@ public class ApfelServer {
 
     private void handleClient(Socket clientSocket) {
         try {
-            ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-
-            // Empfange Parameter vom Client
-            int xpix = (int) inputStream.readObject();
-            int ypix = (int) inputStream.readObject();
-            double zoomRate = (double) inputStream.readObject();
 
             // Parameter des Ausschnitts
             double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
             double cr = -0.743643887036151, ci = 0.131825904205330;
 
-            System.out.println("[+] Starting calculation with approximately " + numThreads + " Threads.");
+            System.out.println("[+] Starting calculation with " + numThreads + " threads on resolution " + Util.RESOLUTION_WIDTH + "x" + Util.RESOLUTION_HEIGHT+ ".");
 
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
-                System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax + " | zoom_rate: " + zoomRate);
+                System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax );
 
-                Color[][] image = new Color[xpix][ypix];
+                Color[][] image = new Color[Util.RESOLUTION_WIDTH][Util.RESOLUTION_HEIGHT];
 
-                calculateImage(xpix, ypix, xmin, xmax, ymin, ymax, image);
+                calculateImage(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, xmin, xmax, ymin, ymax, image);
 
                 outputStream.writeObject(image);
                 outputStream.flush();
@@ -69,10 +66,10 @@ public class ApfelServer {
 
                 double xdim = xmax - xmin;
                 double ydim = ymax - ymin;
-                xmin = cr - xdim / 2 / zoomRate;
-                xmax = cr + xdim / 2 / zoomRate;
-                ymin = ci - ydim / 2 / zoomRate;
-                ymax = ci + ydim / 2 / zoomRate;
+                xmin = cr - xdim / 2 / ZOOM_RATE;
+                xmax = cr + xdim / 2 / ZOOM_RATE;
+                ymin = ci - ydim / 2 / ZOOM_RATE;
+                ymax = ci + ydim / 2 / ZOOM_RATE;
 
                 // Sende Bestätigung an den client, um die nächste Iteration zu starten
                 outputStream.writeObject("NextIteration");
@@ -84,7 +81,7 @@ public class ApfelServer {
 
             clientSocket.close();
             System.out.println("[-] Client " + clientSocket.getInetAddress() + " disconnected.");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
