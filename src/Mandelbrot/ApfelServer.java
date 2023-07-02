@@ -12,6 +12,10 @@ public class ApfelServer {
     final int SERVER_PORT = 1337;
 
     public static void main(String[] args) {
+        Util.createDirectory(Util.recordingPath);
+        Util.createDirectory(Util.videoPath);
+        Util.createDirectory(Util.imagePath);
+
         ApfelServer server = new ApfelServer();
         server.start();
     }
@@ -126,7 +130,7 @@ public class ApfelServer {
         int iter;
         double zr, zi, zr2 = 0, zi2 = 0, zri = 0, betrag2 = 0;
 
-        for (iter = 0; iter < MAX_ITERATIONS && betrag2 <= MAX_BETRAG; iter++) {
+        for (iter = 0; iter <= MAX_ITERATIONS && betrag2 <= MAX_BETRAG; iter++) {
             zr = zr2 - zi2 + cr;
             zi = zri + zri + ci;
 
