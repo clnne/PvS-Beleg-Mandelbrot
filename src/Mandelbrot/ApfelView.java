@@ -2,46 +2,56 @@ package Mandelbrot;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class ApfelView {
     private int xpix, ypix;
     private BufferedImage image;
-    private ApfelPanel ap;
+    private ApfelPanel apfelPanel;
+    private static final int availableCores = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args) {
-        ApfelView v = new ApfelView(640, 480);
+        ApfelView view = new ApfelView(640, 480);
     }
 
     public ApfelView(int xpix, int ypix) {
+        // Erstelle das Bild
         this.xpix = xpix;
         this.ypix = ypix;
         image = new BufferedImage(xpix, ypix, BufferedImage.TYPE_INT_RGB);
-        JFrame f = new JFrame();
-        ap = new ApfelPanel();
-        JButton sb = new JButton("Start");
-        sb.addActionListener(e -> {
-            sb.setEnabled(false);
+
+        // Erstelle die GUI und füge den Start-Button hinzu
+        apfelPanel = new ApfelPanel();
+        JFrame frame = new JFrame();
+        frame.setTitle("Mandelbrot");
+        frame.setSize(xpix, ypix + 72);
+        frame.setResizable(false);
+        JPanel panelBottom = new JPanel(new FlowLayout());
+
+        JButton startButton = new JButton("Mandelbrot berechnen");
+        startButton.addActionListener(e -> {
+            startButton.setEnabled(false);
+
             // über Thread da sonst die gui blockiert
             Thread calculationThread = new Thread(() -> {
                 ApfelClient client = new ApfelClient();
                 client.startCalculation(xpix, ypix, ApfelView.this);
-                SwingUtilities.invokeLater(() -> sb.setEnabled(true));
+                SwingUtilities.invokeLater(() -> panelBottom.setEnabled(true));
             });
+            calculationThread.setPriority(Thread.MAX_PRIORITY);
             calculationThread.start();
+
+            SwingUtilities.invokeLater(() -> panelBottom.setEnabled(true));
         });
+        panelBottom.add(startButton);
 
-        JPanel sp = new JPanel(new FlowLayout());
-        sp.add(sb);
+        // Erstelle das Fenster mit allen Buttons
+        frame.setContentPane(apfelPanel);
+        frame.setLayout(new BorderLayout());
+        frame.add(panelBottom, BorderLayout.SOUTH);
 
-        f.setContentPane(ap);
-        f.setLayout(new BorderLayout());
-        f.add(sp, BorderLayout.SOUTH);
-        f.setSize(xpix, ypix + 100);
-        f.setVisible(true);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public void updateImage(Color[][] c) {
@@ -50,7 +60,7 @@ public class ApfelView {
                 image.setRGB(x, y, c[x][y].getRGB());
             }
         }
-        ap.repaint();
+        apfelPanel.repaint();
     }
 
     class ApfelPanel extends JPanel {

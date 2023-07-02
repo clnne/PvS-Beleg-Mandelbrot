@@ -5,9 +5,10 @@ import java.io.*;
 import java.net.*;
 
 public class ApfelServer {
-    private ServerSocket serverSocket;
-    final int max_iter = 5000;
-    final double max_betrag2 = 4;
+    final int MAX_ITERATIONS = 5000;
+    final double MAX_BETRAG = 4;
+    final int MAX_ZOOM_COUNT = 50;
+    final int SERVER_PORT = 1337;
 
     public static void main(String[] args) {
         ApfelServer server = new ApfelServer();
@@ -16,12 +17,12 @@ public class ApfelServer {
 
     public void start() {
         try {
-            serverSocket = new ServerSocket(1337);
-            System.out.println("Server started. Waiting for the client to connect...");
+            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+            System.out.println("[+] Server started. Waiting for the client to connect...");
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client" + clientSocket.getInetAddress() + " connected");
+                System.out.println("[+] Client connected from " + clientSocket.getInetAddress() + ".");
 
                 Thread clientThread = new Thread(() -> handleClient(clientSocket));
                 clientThread.start();
@@ -36,16 +37,17 @@ public class ApfelServer {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
+            // Empfange Parameter vom Client
             int xpix = (int) inputStream.readObject();
             int ypix = (int) inputStream.readObject();
+            double zoomRate = (double) inputStream.readObject();
 
-            double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1; // Parameter des Ausschnitts
+            // Parameter des Ausschnitts
+            double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
             double cr = -0.743643887036151, ci = 0.131825904205330;
-            double zoomRate = 1.5;
-            int maxIter = 5000;
 
-            for (int i = 1; i < 65; i++) {
-                System.out.println(i + " Vergrößerung: " + 2.6 / (xmax - xmin) + " xmin: " + xmin + " xmax: " + xmax);
+            for (int i = 1; i < MAX_ZOOM_COUNT; i++) {
+                System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax + " | zoom_rate: " + zoomRate);
 
                 Color[][] image = new Color[xpix][ypix];
 
@@ -54,7 +56,7 @@ public class ApfelServer {
                 outputStream.writeObject(image);
                 outputStream.flush();
 
-                Thread.sleep(50); // unnötig?
+                //Thread.sleep(50); // unnötig?
 
                 double xdim = xmax - xmin;
                 double ydim = ymax - ymin;
@@ -72,15 +74,15 @@ public class ApfelServer {
             outputStream.flush();
 
             clientSocket.close();
-            System.out.println("Client disconnected: " + clientSocket.getInetAddress());
-        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            System.out.println("[-] Client " + clientSocket.getInetAddress() + " disconnected.");
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private void calculateImage(int xpix, int ypix, double xmin, double xmax, double ymin, double ymax, Color[][] image) {
         Thread[] calculationThreads = new Thread[ypix];
-        int numThreads = Runtime.getRuntime().availableProcessors();
+        int numThreads = Runtime.getRuntime().availableProcessors() * 4;
 
         for (int y = 0; y < ypix; y++) {
             final int yPos = y;
@@ -123,7 +125,7 @@ public class ApfelServer {
         int iter;
         double zr, zi, zr2 = 0, zi2 = 0, zri = 0, betrag2 = 0;
 
-        for (iter = 0; iter < max_iter && betrag2 <= max_betrag2; iter++) {
+        for (iter = 0; iter < MAX_ITERATIONS && betrag2 <= MAX_BETRAG; iter++) {
             zr = zr2 - zi2 + cr;
             zi = zri + zri + ci;
 
@@ -139,19 +141,19 @@ public class ApfelServer {
         boolean farbe = true;
 
         final int[][] farben = {
-                {1, 255, 255, 255}, // Hohe Iterationszahlen sollen hell,
-                {30, 10, 255, 40}, //
-                {300, 10, 10, 40}, // die etwas niedrigeren dunkel,
-                {500, 205, 60, 40}, // die "Spiralen" rot
-                {850, 120, 140, 255}, // und die "Arme" hellblau werden.
-                {1000, 50, 30, 255}, // Innen kommt ein dunkleres Blau,
-                {1100, 0, 255, 0}, // dann grelles Gr�n
-                {1997, 20, 70, 20}, // und ein dunkleres Gr�n.
-                {max_iter, 0, 0, 0}
+            {1, 255, 255, 255}, // Hohe Iterationszahlen sollen hell,
+            {30, 10, 255, 40}, //
+            {300, 10, 10, 40}, // die etwas niedrigeren dunkel,
+            {500, 205, 60, 40}, // die "Spiralen" rot
+            {850, 120, 140, 255}, // und die "Arme" hellblau werden.
+            {1000, 50, 30, 255}, // Innen kommt ein dunkleres Blau,
+            {1100, 0, 255, 0}, // dann grelles Grün
+            {1997, 20, 70, 20}, // und ein dunkleres Grün.
+            {MAX_ITERATIONS, 0, 0, 0}
         };
 
         if (!farbe) {
-            if (iter == max_iter) return Color.BLACK;
+            if (iter == MAX_ITERATIONS) return Color.BLACK;
             else return Color.RED;
         }
 
