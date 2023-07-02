@@ -32,7 +32,6 @@ public class ApfelView {
         startButton.addActionListener(e -> {
             startButton.setEnabled(false);
 
-            // über Thread da sonst die gui blockiert
             Thread calculationThread = new Thread(() -> {
                 ApfelClient client = new ApfelClient();
                 client.startCalculation(ApfelView.this);
@@ -47,7 +46,11 @@ public class ApfelView {
 
         JButton createVideoButton = new JButton("Video erstellen");
         createVideoButton.addActionListener(e -> {
-            VideoCreator.createVideo(Util.getTimestamp());
+            Thread videoCreationThread = new Thread(() -> {
+                VideoCreator.createVideo(Util.getTimestamp());
+            });
+            videoCreationThread.setPriority(Thread.MAX_PRIORITY);
+            videoCreationThread.start();
         });
         panelBottom.add(createVideoButton);
 
@@ -75,7 +78,11 @@ public class ApfelView {
             g.drawImage(image, 0, 0, null);
 
             // Speichere das Bild als JPEG
-            Util.saveImage(image, counter++);
+            Thread imageSaverThread = new Thread(() -> {
+                Util.saveImage(image, counter++);
+            });
+            imageSaverThread.setPriority(Thread.MAX_PRIORITY);
+            imageSaverThread.start();
         }
     }
 }
