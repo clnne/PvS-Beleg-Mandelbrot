@@ -26,8 +26,8 @@ public class VideoCreator {
         final int framesPerSecond = 8;
         final long frameRate = 1000000 / framesPerSecond;
 
-        final int width = 854;
-        final int height = 480;
+        final int width = Util.RESOLUTION_WIDTH;
+        final int height = Util.RESOLUTION_HEIGHT;
 
 
         try {

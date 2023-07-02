@@ -55,7 +55,10 @@ public class ApfelServer {
 
             System.out.println("[+] Starting calculation with approximately " + numThreads + " Threads.");
 
+            long startTime = System.currentTimeMillis();
+
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
+                long now = System.currentTimeMillis();
                 System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax + " | zoom_rate: " + zoomRate);
 
                 Color[][] image = new Color[xpix][ypix];
@@ -77,7 +80,14 @@ public class ApfelServer {
                 // Sende Bestätigung an den client, um die nächste Iteration zu starten
                 outputStream.writeObject("NextIteration");
                 outputStream.flush();
+                long then = System.currentTimeMillis();
+                long elapsedTime = then - now;
+                System.out.println("Calculation took " + elapsedTime/1000 + "s.");
             }
+
+            long endTime   = System.currentTimeMillis();
+            long totalTime = endTime - startTime;
+            System.out.println("[-] Finished calculation, took " + totalTime/1000 + "s.");
 
             outputStream.writeObject("Finish");
             outputStream.flush();
