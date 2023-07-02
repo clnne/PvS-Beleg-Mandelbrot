@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 
 public class ApfelServer {
+    private ServerSocket serverSocket;
     final int MAX_ITERATIONS = 5000;
     final double MAX_BETRAG = 4;
     final int MAX_ZOOM_COUNT = 50;
@@ -17,7 +18,7 @@ public class ApfelServer {
 
     public void start() {
         try {
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+            serverSocket = new ServerSocket(SERVER_PORT);
             System.out.println("[+] Server started. Waiting for the client to connect...");
 
             while (true) {
