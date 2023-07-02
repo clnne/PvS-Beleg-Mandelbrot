@@ -8,9 +8,9 @@ import java.net.Socket;
 
 public class ApfelClient {
 
-    final String SERVER_IP = "192.168.178.88";
+    final String SERVER_IP = "192.168.178.100";
     final int SERVER_PORT = 1337;
-    final double ZOOM_RATE = 2;
+    final double ZOOM_RATE = 1.2;
 
     public static void main(String[] args) {
         // Erstelle einen neuen Client und starte die Berechnung

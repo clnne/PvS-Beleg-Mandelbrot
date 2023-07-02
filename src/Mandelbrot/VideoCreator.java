@@ -7,10 +7,17 @@ import com.xuggle.mediatool.ToolFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class VideoCreator {
 
@@ -21,9 +28,12 @@ public class VideoCreator {
         // video parameters
         final int videoStreamIndex = 0;
         final int videoStreamId = 0;
-        final long frameRate = DEFAULT_TIME_UNIT.convert(500, MILLISECONDS);
-        final int width = 320;
-        final int height = 200;
+
+        final int framesPerSecond = 8;
+        final long frameRate = 1000000 / framesPerSecond;
+
+        final int width = 1280;
+        final int height = 720;
 
 
         try {
@@ -36,15 +46,43 @@ public class VideoCreator {
             writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
             File dir = new File(Util.imagePath.toString());
-            for (File f : Objects.requireNonNull(dir.listFiles())) {
-                BufferedImage frame = ImageIO.read(f);
+            File[] files = dir.listFiles((dir1, name) -> name.startsWith("image_") && name.endsWith(".jpeg"));
+
+            // Sort the files by their number
+            assert files != null;
+            Arrays.sort(files, Comparator.comparingInt(f -> Integer.parseInt(f.getName().substring(6, f.getName().length() - 5))));
+
+            // Iterate over the sorted files
+            for (File file : files) {
+                BufferedImage frame = ImageIO.read(file);
+                System.out.println("[+] Adding frame " + file.getName());
                 writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
                 nextFrameTime += frameRate;
             }
+
             writer.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public static void sortFilesInDir(String directory) {
+        File dir = new File(directory);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith("image_") && name.endsWith(".jpeg"));
+
+        // Sort the files by their number
+        Arrays.sort(files, Comparator.comparingInt(f -> Integer.parseInt(f.getName().substring(6, f.getName().length() - 5))));
+
+        // Iterate over the sorted files
+        for (File file : files) {
+            // Do something with the file
+            System.out.println(file.getName());
+        }
+    }
+
+    public static void main(String[] args) {
+        createVideo("test");
+    }
+
 }

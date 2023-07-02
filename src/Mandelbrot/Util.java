@@ -1,6 +1,5 @@
 package Mandelbrot;
 
-import javax.annotation.processing.FilerException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,7 +15,6 @@ public class Util {
 
     public static void createDirectory(Path path) {
         try {
-            // Erstelle den Ordner, sofern er nicht existiert
             if (!Files.exists(path)) {
                 Files.createDirectory(path);
             }
@@ -27,7 +25,7 @@ public class Util {
 
     public static void saveImage(BufferedImage image, int imageNumber) {
         try {
-            ImageIO.write(image, "png", Util.imagePath.resolve("image_" + imageNumber + ".png").toFile());
+            ImageIO.write(image, "png", Util.imagePath.resolve("image_" + imageNumber + ".jpeg").toFile());
         } catch (IOException e) {
             System.out.println("[-] Failed to save image.");
         }

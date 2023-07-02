@@ -13,7 +13,7 @@ public class ApfelView {
     private static final int availableCores = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args) {
-        ApfelView view = new ApfelView(640, 480);
+        ApfelView view = new ApfelView(1280, 720);
     }
 
     public ApfelView(int xpix, int ypix) {

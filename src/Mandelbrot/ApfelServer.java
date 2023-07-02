@@ -11,6 +11,8 @@ public class ApfelServer {
     final int MAX_ZOOM_COUNT = 50;
     final int SERVER_PORT = 1337;
 
+    final int numThreads = Runtime.getRuntime().availableProcessors() * 4;
+
     public static void main(String[] args) {
         Util.createDirectory(Util.recordingPath);
         Util.createDirectory(Util.videoPath);
@@ -51,6 +53,8 @@ public class ApfelServer {
             double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
             double cr = -0.743643887036151, ci = 0.131825904205330;
 
+            System.out.println("[-] Starting calculation with approximately " + numThreads + " Threads.");
+
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
                 System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax + " | zoom_rate: " + zoomRate);
 
@@ -87,11 +91,11 @@ public class ApfelServer {
 
     private void calculateImage(int xpix, int ypix, double xmin, double xmax, double ymin, double ymax, Color[][] image) {
         Thread[] calculationThreads = new Thread[ypix];
-        int numThreads = Runtime.getRuntime().availableProcessors() * 4;
 
         for (int y = 0; y < ypix; y++) {
             final int yPos = y;
             calculationThreads[y] = new Thread(() -> run(xpix, ypix, xmin, xmax, ymin, ymax, image, yPos));
+            calculationThreads[y].setPriority(Thread.MAX_PRIORITY);
             calculationThreads[y].start();
 
             // wir begrenzen die anzahl der threads
