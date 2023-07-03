@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 
 public class ApfelClient {
@@ -28,8 +30,8 @@ public class ApfelClient {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
             System.out.println("[+] Connected to server.");
 
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(new GZIPOutputStream(socket.getOutputStream()));
+            ObjectInputStream inputStream = new ObjectInputStream(new GZIPInputStream(socket.getInputStream()));
 
             // Empfange Daten vom Server
             Object obj;

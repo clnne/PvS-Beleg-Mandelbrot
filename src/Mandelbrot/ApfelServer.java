@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+import java.util.zip.GZIPOutputStream;
 
 
 public class ApfelServer {
@@ -44,7 +45,7 @@ public class ApfelServer {
 
     private void handleClient(Socket clientSocket) {
         try {
-            ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(new GZIPOutputStream(clientSocket.getOutputStream()));
 
             // Parameter des Ausschnitts
             double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
@@ -52,48 +53,42 @@ public class ApfelServer {
 
             System.out.println("[+] Starting calculation with " + numThreads + " threads on resolution " + Util.RESOLUTION_WIDTH + "x" + Util.RESOLUTION_HEIGHT+ ".");
 
-            long startTime = System.currentTimeMillis();
-
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
-                long now = System.currentTimeMillis();
-                System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax);
+                System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax );
 
                 Color[][] image = new Color[Util.RESOLUTION_WIDTH][Util.RESOLUTION_HEIGHT];
 
-                long a=System.currentTimeMillis();
+                long startTimeCalculation = System.nanoTime();
+                    calculateImage(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, xmin, xmax, ymin, ymax, image);
+                long endTimeCalculation = System.nanoTime();
+                System.out.println("[-] Calculation time: " + (endTimeCalculation - startTimeCalculation) / 1000000 + "ms");
 
-                calculateImage(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, xmin, xmax, ymin, ymax, image);
 
-                long b=System.currentTimeMillis()-a;
-                System.out.println("calculateImage: " + b + "ms.");
-                
-                long x=System.currentTimeMillis();
-                
-                outputStream.writeObject(image);
-                long y=System.currentTimeMillis()-x;
-                System.out.println("writeObject: " + y + "ms.");
-                outputStream.flush();
+                long startTimeImageWrite = System.nanoTime();
+                    outputStream.writeObject(image);
+                    outputStream.flush();
+                long endTimeImageWrite = System.nanoTime();
+                System.out.println("[-] Image write time: " + (endTimeImageWrite - startTimeImageWrite) / 1000000 + "ms");
 
-                //Thread.sleep(50); // unnötig?
 
-                double xdim = xmax - xmin;
-                double ydim = ymax - ymin;
-                xmin = cr - xdim / 2 / ZOOM_RATE;
-                xmax = cr + xdim / 2 / ZOOM_RATE;
-                ymin = ci - ydim / 2 / ZOOM_RATE;
-                ymax = ci + ydim / 2 / ZOOM_RATE;
+                long startTimeZoom = System.nanoTime();
+                    double xdim = xmax - xmin;
+                    double ydim = ymax - ymin;
+                    xmin = cr - xdim / 2 / ZOOM_RATE;
+                    xmax = cr + xdim / 2 / ZOOM_RATE;
+                    ymin = ci - ydim / 2 / ZOOM_RATE;
+                    ymax = ci + ydim / 2 / ZOOM_RATE;
+                long endTimeZoom = System.nanoTime();
+                System.out.println("[-] Zoom-Calculation time: " + (endTimeZoom - startTimeZoom) / 1000000 + "ms");
+
 
                 // Sende Bestätigung an den client, um die nächste Iteration zu starten
-                outputStream.writeObject("NextIteration");
-                outputStream.flush();
-                long then = System.currentTimeMillis();
-                long elapsedTime = then - now;
-                System.out.println("Calculation took " + elapsedTime/1000 + "s.");
+                long startTimeNextIteration = System.nanoTime();
+                    outputStream.writeObject("NextIteration");
+                    outputStream.flush();
+                long endTimeNextIteration = System.nanoTime();
+                System.out.println("[-] Next iteration time: " + (endTimeNextIteration - startTimeNextIteration) / 1000000 + "ms");
             }
-
-            long endTime   = System.currentTimeMillis();
-            long totalTime = endTime - startTime;
-            System.out.println("[-] Finished calculation, took " + totalTime/1000 + "s.");
 
             outputStream.writeObject("Finish");
             outputStream.flush();
