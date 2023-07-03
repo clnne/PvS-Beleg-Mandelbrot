@@ -10,8 +10,8 @@ public class ApfelServer {
     private ServerSocket serverSocket;
     final int MAX_ITERATIONS = 5000;
     final double MAX_BETRAG = 4;
-    final int MAX_ZOOM_COUNT = 384;
-    final double ZOOM_RATE = 1.025;
+    final int MAX_ZOOM_COUNT = 720;
+    final double ZOOM_RATE = 1.050;
     final int SERVER_PORT = 1337;
 
     final int numThreads = Runtime.getRuntime().availableProcessors() * 4;

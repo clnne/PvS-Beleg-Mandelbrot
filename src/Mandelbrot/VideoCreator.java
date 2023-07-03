@@ -22,7 +22,7 @@ public class VideoCreator {
         final int videoStreamIndex = 0;
         final int videoStreamId = 0;
 
-        final int framesPerSecond = 20;
+        final int framesPerSecond = 24;
         final long frameRate = 1000000 / framesPerSecond;
 
         System.out.println("[+] Creating video " + videoName + ".mp4 ...");
