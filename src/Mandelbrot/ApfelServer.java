@@ -192,7 +192,17 @@ public class ApfelServer {
         }
         return Color.BLACK;
         */
-        Color color = Color.getHSBColor((float)iter / (float)MAX_ITERATIONS * 20.0f, 1.0f, 1.0f);
+        float hsb=(float)iter / (float)MAX_ITERATIONS * 20.0f;
+        Color color;
+        if(hsb>0.999f){ //inneres rot
+            color = Color.getHSBColor(0.666f, 1.0f, 1.0f);//zu blau
+        }
+        else if(hsb<0.05f){//äußeres rot
+            color = Color.getHSBColor(0.333f, 1.0f, 1.0f);//zu grün
+        }
+        else {
+            color = Color.getHSBColor(hsb, 1.0f, 1.0f);
+        }
         return color;
     }
 }
