@@ -192,6 +192,7 @@ public class ApfelServer {
         }
         return Color.BLACK;
         */
+        //https://www.learnui.design/blog/the-hsb-color-system-practicioners-primer.html
         float hsb=(float)iter / (float)MAX_ITERATIONS * 20.0f;
         Color color;
         if(hsb>0.999f){ //inneres rot
