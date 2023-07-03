@@ -60,9 +60,18 @@ public class ApfelServer {
 
                 Color[][] image = new Color[Util.RESOLUTION_WIDTH][Util.RESOLUTION_HEIGHT];
 
+                long a=System.currentTimeMillis();
+
                 calculateImage(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, xmin, xmax, ymin, ymax, image);
 
+                long b=System.currentTimeMillis()-a;
+                System.out.println("calculateImage: " + b + "ms.");
+                
+                long x=System.currentTimeMillis();
+                
                 outputStream.writeObject(image);
+                long y=System.currentTimeMillis()-x;
+                System.out.println("writeObject: " + y + "ms.");
                 outputStream.flush();
 
                 //Thread.sleep(50); // unnötig?
