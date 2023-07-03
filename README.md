@@ -35,3 +35,7 @@ java ApfelView.java
 ```
 
 #### 4. Generierung der Mandelbrot-Menge im GUI durch Drücken des `Mandelbrotmenge generieren`-Buttons
+
+# Beispiel
+
+### https://vaultwarden.counteresp.de/#/send/JUxkZyfTS92HERZRzzvw7Q/Jl0doKEYxguWEVEeo4vQgw[Mandelbrot Beispiel.mp4]
