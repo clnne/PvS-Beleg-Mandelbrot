@@ -77,33 +77,33 @@ public class ApfelServer {
                 long startTimeCalculation = System.nanoTime();
                     calculateImage(r.width, r.height, xmin, xmax, ymin, ymax, image);
                 long endTimeCalculation = System.nanoTime();
-                System.out.println("[-] Calculation time: " + (endTimeCalculation - startTimeCalculation) / 1000000 + "ms");
+                long calculationDuration = (endTimeCalculation - startTimeCalculation) / 1000000;
+                //System.out.println("[-] Calculation time: " + calculationDuration + "ms");
 
 
                 long startTimeImageWrite = System.nanoTime();
                     outputStream.writeObject(image);
                     outputStream.flush();
                 long endTimeImageWrite = System.nanoTime();
-                System.out.println("[-] Image write time: " + (endTimeImageWrite - startTimeImageWrite) / 1000000 + "ms");
+                long imageWriteDuration = (endTimeImageWrite - startTimeImageWrite) / 1000000;
+                //System.out.println("[-] Image write time: " + imageWriteDuration + "ms");
 
 
-                long startTimeZoom = System.nanoTime();
-                    double xdim = xmax - xmin;
-                    double ydim = ymax - ymin;
-                    xmin = cr - xdim / 2 / ZOOM_RATE;
-                    xmax = cr + xdim / 2 / ZOOM_RATE;
-                    ymin = ci - ydim / 2 / ZOOM_RATE;
-                    ymax = ci + ydim / 2 / ZOOM_RATE;
-                long endTimeZoom = System.nanoTime();
-                System.out.println("[-] Zoom-Calculation time: " + (endTimeZoom - startTimeZoom) / 1000000 + "ms");
+                double xdim = xmax - xmin;
+                double ydim = ymax - ymin;
+                xmin = cr - xdim / 2 / ZOOM_RATE;
+                xmax = cr + xdim / 2 / ZOOM_RATE;
+                ymin = ci - ydim / 2 / ZOOM_RATE;
+                ymax = ci + ydim / 2 / ZOOM_RATE;
 
 
                 // Sende Bestätigung an den client, um die nächste Iteration zu starten
-                long startTimeNextIteration = System.nanoTime();
-                    outputStream.writeObject("NextIteration");
-                    outputStream.flush();
-                long endTimeNextIteration = System.nanoTime();
-                System.out.println("[-] Next iteration time: " + (endTimeNextIteration - startTimeNextIteration) / 1000000 + "ms");
+                outputStream.writeObject("NextIteration");
+                outputStream.flush();
+
+                // Zeige Berechnungsdauer an
+                System.out.println("[?] Berechnungszeit: " + (calculationDuration + imageWriteDuration) + "ms");
+
             }
 
             outputStream.writeObject("Finish");

@@ -1,6 +1,5 @@
 package Mandelbrot;
 
-import com.xuggle.mediatool.IMediaViewer;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 
