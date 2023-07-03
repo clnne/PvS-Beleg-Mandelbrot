@@ -1,7 +1,6 @@
 package Mandelbrot;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 import java.util.zip.GZIPOutputStream;
@@ -17,13 +16,28 @@ public class ApfelServer {
 
     final int numThreads = Runtime.getRuntime().availableProcessors() * 4;
 
+    public Color[] pixelColors;
+
     public static void main(String[] args) {
         Util.createDirectory(Util.recordingPath);
         Util.createDirectory(Util.videoPath);
         Util.createDirectory(Util.imagePath);
 
         ApfelServer server = new ApfelServer();
+        server.pixelColors = new Color[server.MAX_ITERATIONS + 101];
+        server.initPixelColors();
         server.start();
+    }
+
+    public void initPixelColors() {
+        for (int i = 0; i <= MAX_ITERATIONS + 100; i++) {
+            pixelColors[i] = Color.getHSBColor((float)i / (float)MAX_ITERATIONS * 20.0f, 1.0f, 1.0f);
+        }
+        System.out.println("[+] Pixel colors initialized.");
+    }
+
+    public Color getPixelColor(int i) {
+        return pixelColors[i];
     }
 
     public void start() {
@@ -135,8 +149,7 @@ public class ApfelServer {
         for (int x = 0; x < xpix; x++) {
             double c_re = xmin + (xmax - xmin) * x / xpix;
             int iter = calc(c_re, c_im);
-            Color pix = farbwert(iter);
-            bild[x][y] = pix;
+            bild[x][y] = getPixelColor(iter);
         }
     }
 
@@ -155,44 +168,5 @@ public class ApfelServer {
             betrag2 = zr2 + zi2;
         }
         return iter;
-    }
-
-    Color farbwert(int iter) {
-        /*boolean farbe = true;
-
-        final int[][] farben = {
-            {1, 255, 255, 255}, // Hohe Iterationszahlen sollen hell,
-            {30, 10, 255, 40}, //
-            {300, 10, 10, 40}, // die etwas niedrigeren dunkel,
-            {500, 205, 60, 40}, // die "Spiralen" rot
-            {850, 120, 140, 255}, // und die "Arme" hellblau werden.
-            {1000, 50, 30, 255}, // Innen kommt ein dunkleres Blau,
-            {1100, 0, 255, 0}, // dann grelles Grün
-            {1997, 20, 70, 20}, // und ein dunkleres Grün.
-            {MAX_ITERATIONS, 0, 0, 0}
-        };
-
-        if (!farbe) {
-            if (iter == MAX_ITERATIONS) return Color.BLACK;
-            else return Color.RED;
-        }
-
-        int[] F = new int[3];
-        for (int i = 1; i < farben.length - 1; i++) {
-            if (iter < farben[i][0]) {
-                int iterationsInterval = farben[i - 1][0] - farben[i][0];
-                double gewichtetesMittel = (iter - farben[i][0]) / (double) iterationsInterval;
-
-                for (int f = 0; f < 3; f++) {
-                    int farbInterval = farben[i - 1][f + 1] - farben[i][f + 1];
-                    F[f] = (int) (gewichtetesMittel * farbInterval) + farben[i][f + 1];
-                }
-                return new Color(F[0], F[1], F[2]);
-            }
-        }
-        return Color.BLACK;
-        */
-        Color color = Color.getHSBColor((float)iter / (float)MAX_ITERATIONS * 20.0f, 1.0f, 1.0f);
-        return color;
     }
 }

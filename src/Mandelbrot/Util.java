@@ -1,6 +1,7 @@
 package Mandelbrot;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +19,8 @@ public class Util {
 
     public static int RESOLUTION_WIDTH = (1280);
     public static int RESOLUTION_HEIGHT = (720);
+
+    public static int MAX_ITERATIONS = 5000;
 
     public static void createDirectory(Path path) {
         try {
@@ -40,5 +43,4 @@ public class Util {
     public static String getTimestamp() {
         return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
     }
-
 }
