@@ -195,7 +195,7 @@ public class ApfelServer {
         //https://www.learnui.design/blog/the-hsb-color-system-practicioners-primer.html
         float hsb=(float)iter / (float)MAX_ITERATIONS * 20.0f;
         Color color;
-        if(hsb>0.999f){ //inneres rot
+        /*if(hsb>0.999f){ //inneres rot
             color = Color.getHSBColor(0.666f, 1.0f, 1.0f);//zu blau
         }
         else if(hsb<0.05f){//äußeres rot
@@ -203,7 +203,8 @@ public class ApfelServer {
         }
         else {
             color = Color.getHSBColor(hsb, 1.0f, 1.0f);
-        }
+        }*/
+        color = Color.getHSBColor(hsb, 1.0f, 1.0f);
         return color;
     }
 }

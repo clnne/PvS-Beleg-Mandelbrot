@@ -16,8 +16,8 @@ public class Util {
     public static Path videoPath = currentPath.resolve(recordingPath + "/Videos");
     public static Path imagePath = currentPath.resolve(recordingPath + "/Bilder");
 
-    public static int RESOLUTION_WIDTH = (1280);
-    public static int RESOLUTION_HEIGHT = (720);
+    public static int RESOLUTION_WIDTH = (640);
+    public static int RESOLUTION_HEIGHT = (480);
 
     public static void createDirectory(Path path) {
         try {
