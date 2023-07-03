@@ -10,8 +10,10 @@ public class ApfelView {
     private BufferedImage image;
     private ApfelPanel apfelPanel;
 
+    static Rectangle r = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
     public static void main(String[] args) {
-        ApfelView view = new ApfelView(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT);
+        ApfelView view = new ApfelView(r.width, r.height);
     }
 
     public ApfelView(int xpix, int ypix) {
@@ -24,7 +26,6 @@ public class ApfelView {
         apfelPanel = new ApfelPanel();
         JFrame frame = new JFrame();
         frame.setTitle("Mandelbrot");
-        frame.setSize(xpix, ypix + 72);
         frame.setResizable(true);
         JPanel panelBottom = new JPanel(new FlowLayout());
 
@@ -47,7 +48,7 @@ public class ApfelView {
         JButton createVideoButton = new JButton("Video erstellen");
         createVideoButton.addActionListener(e -> {
             Thread videoCreationThread = new Thread(() -> {
-                VideoCreator.createVideo(Util.getTimestamp());
+                VideoCreator.createVideo(Util.getTimestamp(), r.width, r.height);
             });
             videoCreationThread.setPriority(Thread.MAX_PRIORITY);
             videoCreationThread.start();
@@ -59,6 +60,8 @@ public class ApfelView {
         frame.setLayout(new BorderLayout());
         frame.add(panelBottom, BorderLayout.SOUTH);
 
+        frame.setSize(r.width, r.height);
+        frame.setUndecorated(true);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -75,6 +78,7 @@ public class ApfelView {
     private int counter = 0;
     class ApfelPanel extends JPanel {
         public void paint(Graphics g) {
+            super.paint(g);
             g.drawImage(image, 0, 0, null);
 
             // Speichere das Bild als JPEG

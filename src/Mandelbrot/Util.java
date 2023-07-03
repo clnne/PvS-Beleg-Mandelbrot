@@ -1,7 +1,6 @@
 package Mandelbrot;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,11 +15,6 @@ public class Util {
     public static Path recordingPath = currentPath.resolve("src/Aufnahmen");
     public static Path videoPath = currentPath.resolve(recordingPath + "/Videos");
     public static Path imagePath = currentPath.resolve(recordingPath + "/Bilder");
-
-    public static int RESOLUTION_WIDTH = (640);
-    public static int RESOLUTION_HEIGHT = (480);
-
-    public static int MAX_ITERATIONS = 5000;
 
     public static void createDirectory(Path path) {
         try {

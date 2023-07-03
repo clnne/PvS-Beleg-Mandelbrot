@@ -15,7 +15,7 @@ import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
 public class VideoCreator {
 
-    public static void createVideo(String videoName) {
+    public static void createVideo(String videoName, int width, int height) {
         // the clock time of the next frame
         long nextFrameTime = 0;
 
@@ -23,11 +23,8 @@ public class VideoCreator {
         final int videoStreamIndex = 0;
         final int videoStreamId = 0;
 
-        final int framesPerSecond = 8;
+        final int framesPerSecond = 20;
         final long frameRate = 1000000 / framesPerSecond;
-
-        final int width = Util.RESOLUTION_WIDTH;
-        final int height = Util.RESOLUTION_HEIGHT;
 
         System.out.println("[+] Creating video " + videoName + ".mp4 ...");
 
@@ -78,7 +75,7 @@ public class VideoCreator {
     }
 
     public static void main(String[] args) {
-        createVideo(Util.getTimestamp());
+        createVideo(Util.getTimestamp(), 1920, 1080);
     }
 
 }

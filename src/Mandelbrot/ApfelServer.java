@@ -10,8 +10,8 @@ public class ApfelServer {
     private ServerSocket serverSocket;
     final int MAX_ITERATIONS = 5000;
     final double MAX_BETRAG = 4;
-    final int MAX_ZOOM_COUNT = 240;
-    final double ZOOM_RATE = 1.1;
+    final int MAX_ZOOM_COUNT = 384;
+    final double ZOOM_RATE = 1.025;
     final int SERVER_PORT = 1337;
 
     final int numThreads = Runtime.getRuntime().availableProcessors() * 4;
@@ -65,15 +65,17 @@ public class ApfelServer {
             double xmin = -1.666, xmax = 1, ymin = -1, ymax = 1;
             double cr = -0.743643887036151, ci = 0.131825904205330;
 
-            System.out.println("[+] Starting calculation with " + numThreads + " threads on resolution " + Util.RESOLUTION_WIDTH + "x" + Util.RESOLUTION_HEIGHT+ ".");
+            Rectangle r = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            System.out.println("[+] Starting calculation with " + numThreads + " threads on resolution " + r.width + "x" + r.height+ ".");
 
             for (int i = 1; i <= MAX_ZOOM_COUNT; i++) {
                 System.out.println("[" + i + "/" + MAX_ZOOM_COUNT + "] Vergrößerung: " + 2.6 / (xmax - xmin) + " | xmin: " + xmin + " | xmax: " + xmax );
 
-                Color[][] image = new Color[Util.RESOLUTION_WIDTH][Util.RESOLUTION_HEIGHT];
+
+                Color[][] image = new Color[r.width][r.height];
 
                 long startTimeCalculation = System.nanoTime();
-                    calculateImage(Util.RESOLUTION_WIDTH, Util.RESOLUTION_HEIGHT, xmin, xmax, ymin, ymax, image);
+                    calculateImage(r.width, r.height, xmin, xmax, ymin, ymax, image);
                 long endTimeCalculation = System.nanoTime();
                 System.out.println("[-] Calculation time: " + (endTimeCalculation - startTimeCalculation) / 1000000 + "ms");
 
